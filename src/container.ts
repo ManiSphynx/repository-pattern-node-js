@@ -1,7 +1,6 @@
 import express from "express";
 import { createContainer, asClass } from "awilix";
 import { scopePerRequest } from "awilix-express";
-import { TestService } from "./services/test.service";
 import { SubcriptionMySQLRepository } from "./services/repositories/impl/mysql/subscription.repository";
 import { SubscriptionService } from "./services/subscripton.service";
 
@@ -16,7 +15,6 @@ export default (app: express.Application) => {
 
     //services
     subscriptionService: asClass(SubscriptionService).scoped(),
-    testService: asClass(TestService).scoped(),
   });
 
   app.use(scopePerRequest(container));
