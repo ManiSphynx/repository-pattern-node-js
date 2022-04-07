@@ -10,13 +10,13 @@ export class MovementMySQLRepository implements MovementInteface {
   }
 
   async find(id: number): Promise<Movement | null> {
-    const rows = await this.mysqlPool
+    const rows: any[] = await this.mysqlPool
       .createMySqlPool()
       .promise()
       .execute("SELECT * FROM wallet_movement WHERE id = ?", [id]);
 
     if (rows.length) {
-      return rows[0] as Movement[];
+      return rows[0] as Movement;
     }
 
     return null;
