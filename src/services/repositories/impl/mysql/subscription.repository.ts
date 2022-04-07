@@ -1,21 +1,28 @@
-import conector from "../../../../common/persistence/mysql.persistence";
+import { MySqlPool } from "../../../../common/persistence/mysql.persistence";
 import { Subscription } from "../../domain/subscription";
 import { SubscriptionRepository } from "../../subscription.repository";
 
 export class SubcriptionMySQLRepository implements SubscriptionRepository {
+  mysqlPool: MySqlPool;
+
+  constructor() {
+    this.mysqlPool = new MySqlPool();
+  }
+
   public async all(): Promise<Subscription[]> {
-    const [rows] = await conector.execute(
-      "SELECT * FROM wallet_subscription ORDER BY id DESC"
-    );
+    const [rows] = await this.mysqlPool
+      .createMySqlPool()
+      .promise()
+      .execute("SELECT * FROM wallet_subscription ORDER BY id DESC");
 
     return rows as Subscription[];
   }
 
   public async find(id: number): Promise<Subscription | null> {
-    const [rows]: any[] = await conector.execute(
-      "SELECT * FROM wallet_subscription WHERE id = ?",
-      [id]
-    );
+    const [rows]: any[] = await this.mysqlPool
+      .createMySqlPool()
+      .promise()
+      .execute("SELECT * FROM wallet_subscription WHERE id = ?", [id]);
 
     if (rows.length) {
       return rows[0] as Subscription;
@@ -28,10 +35,13 @@ export class SubcriptionMySQLRepository implements SubscriptionRepository {
     user_id: number,
     code: string
   ): Promise<Subscription | null> {
-    const [rows]: any[] = await conector.execute(
-      "SELECT * FROM wallet_subscription WHERE user_id = ? AND code = ?",
-      [user_id, code]
-    );
+    const [rows]: any[] = await this.mysqlPool
+      .createMySqlPool()
+      .promise()
+      .execute(
+        "SELECT * FROM wallet_subscription WHERE user_id = ? AND code = ?",
+        [user_id, code]
+      );
 
     if (rows.length) {
       return rows[0] as Subscription;
@@ -42,22 +52,30 @@ export class SubcriptionMySQLRepository implements SubscriptionRepository {
 
   public async store(entry: Subscription): Promise<void> {
     const now = new Date();
-    await conector.execute(
-      "INSERT INTO wallet_subscription(user_id, code, amount, cron, created_at) VALUES (?,?,?,?,?)"
-    ),
-      [entry.user_id, entry.code, entry.amount, entry.cron, now];
+    await this.mysqlPool
+      .createMySqlPool()
+      .promise()
+      .execute(
+        "INSERT INTO wallet_subscription(user_id, code, amount, cron, created_at) VALUES (?,?,?,?,?)",
+        [entry.user_id, entry.code, entry.amount, entry.cron, now]
+      );
   }
 
   public async update(entry: Subscription): Promise<void> {
-    const now = new Date();
-    await conector.execute(
-      "UPDATE wallet_subscription SET user_id = ?, code = ?, amount = ?, cron = ?, updated_at = ?,  WHERE id = ?"
-    ),
-      [entry.user_id, entry.code, entry.amount, entry.cron, now, entry.id];
+    const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+    await this.mysqlPool
+      .createMySqlPool()
+      .promise()
+      .execute(
+        "UPDATE wallet_subscription SET code = ?, amount = ?, cron = ?, updated_at = ? WHERE id = ?",
+        [entry.code, entry.amount, entry.cron, now, entry.id]
+      );
   }
 
   public async remove(id: number): Promise<void> {
-    await conector.execute("DELETE FROM wallet_subscription WHERE id = ?"),
-      [id];
+    await this.mysqlPool
+      .createMySqlPool()
+      .promise()
+      .execute("DELETE FROM wallet_subscription WHERE id = ?", [id]);
   }
 }
