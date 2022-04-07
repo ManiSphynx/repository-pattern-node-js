@@ -12,6 +12,7 @@ process.env.APP_ENV = process.env.APP_ENV || "development";
 dotenv.config({ path: `${__dirname}/../config/${process.env.APP_ENV}.env` });
 
 const app: express.Application = express();
+app.use(express.json());
 
 /* Cargador del Container */
 loadContainer(app);
