@@ -1,6 +1,6 @@
 import { MySqlPool } from "../../../../common/persistence/mysql.persistence";
 import { Subscription } from "../../domain/subscription";
-import { SubscriptionRepository } from "../../subscription.repository";
+import { SubscriptionRepository } from "../../interfaces/subscription.interface";
 
 export class SubcriptionMySQLRepository implements SubscriptionRepository {
   mysqlPool: MySqlPool;

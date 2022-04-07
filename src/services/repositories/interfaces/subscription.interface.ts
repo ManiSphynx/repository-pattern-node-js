@@ -1,4 +1,4 @@
-import { Subscription } from "./domain/subscription";
+import { Subscription } from "../domain/subscription";
 
 export interface SubscriptionRepository {
   all(): Promise<Subscription[]>;

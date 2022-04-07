@@ -4,7 +4,7 @@ import {
   SubscriptionUpdateDto,
 } from "../dtos/subscription.dto";
 import { Subscription } from "./repositories/domain/subscription";
-import { SubscriptionRepository } from "./repositories/subscription.repository";
+import { SubscriptionRepository } from "./repositories/interfaces/subscription.interface";
 
 export class SubscriptionService {
   constructor(
